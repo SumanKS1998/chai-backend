@@ -1,8 +1,16 @@
 import dotenv from "dotenv";
+import app from "./app.js";
 import connectDB from "./db/index.js";
-
 dotenv.config({
-  path: "./env",
+  path: "../.env",
 });
-
-connectDB();
+const port = process.env.PORT || 4000;
+connectDB()
+  .then(() => {
+    app.listen(port, () => {
+      console.log(`Server started at ${port}`);
+    });
+  })
+  .catch((e) => {
+    console.log(e);
+  });

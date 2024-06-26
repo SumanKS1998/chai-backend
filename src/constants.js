@@ -1,1 +1,1 @@
-export const DB_NAME = "freetube";
+export const DB_NAME = "youtube";
