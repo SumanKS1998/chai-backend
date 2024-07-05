@@ -18,7 +18,6 @@ export const registerUser = asyncHandler(async (req, res) => {
   // return response
 
   const { username, fullName, password, email } = req.body;
-
   if (
     [username, fullName, password, email].some((field) => field?.trim() === "")
   ) {
@@ -32,17 +31,16 @@ export const registerUser = asyncHandler(async (req, res) => {
   if (existingUser) {
     throw new ApiError(409, "Username or Email already exists.");
   }
-  console.log(req?.files);
   const avatarLocalPath = req.files?.avatar[0]?.path;
   const coverLocalPath = req?.files?.coverImage[0]?.path;
 
-  if (avatarLocalPath) {
+  if (!avatarLocalPath) {
     throw new ApiError(400, "Avatar image required.");
   }
 
   const avatar = await uploadOnCloudinary(avatarLocalPath);
   const coverImage = await uploadOnCloudinary(coverLocalPath);
-
+  console.log("avatar", avatar);
   const user = await User.create({
     username: username?.toLowerCase(),
     fullName,
