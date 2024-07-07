@@ -245,6 +245,9 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
       avatar: avatar?.url,
     },
   }).select("-password");
+  if (updatedUser && avatar?.url) {
+    await removeFromCloudinary(updatedUser.avatar);
+  }
   return res
     .status(200)
     .json(
