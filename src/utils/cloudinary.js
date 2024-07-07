@@ -22,5 +22,19 @@ const uploadOnCloudinary = async (localFilePath) => {
     fs.unlinkSync(localFilePath);
   }
 };
+const removeFromCloudinary = async (imageUrl) => {
+  try {
+    if (!imageUrl) return null;
+    const publicId = imageUrl?.split("/").pop().split(".")[0];
+    const uploadResult = await cloudinary.uploader.destroy(publicId, {
+      resource_type: "image",
+    });
 
-export { uploadOnCloudinary };
+    return uploadResult;
+  } catch (e) {
+    console.log(e);
+    return null;
+  }
+};
+
+export { uploadOnCloudinary, removeFromCloudinary };

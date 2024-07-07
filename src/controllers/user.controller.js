@@ -1,7 +1,10 @@
 import { ApiError } from "../utils/ApiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { User } from "../models/user.model.js";
-import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import {
+  removeFromCloudinary,
+  uploadOnCloudinary,
+} from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken";
 
@@ -256,12 +259,15 @@ const updateUserCoverImage = asyncHandler(async (req, res) => {
   if (!coverImageLocalPath) {
     throw new ApiError(400, "avatar image required");
   }
-  const avatar = await uploadOnCloudinary(coverImageLocalPath);
+  const cover = await uploadOnCloudinary(coverImageLocalPath);
   const updatedUser = await User.findByIdAndUpdate(user?._id, {
     $set: {
-      coverImage: avatar?.url,
+      coverImage: cover?.url,
     },
   }).select("-password");
+  if (updatedUser && cover?.url) {
+    await removeFromCloudinary(user.coverImage);
+  }
   return res
     .status(200)
     .json(
